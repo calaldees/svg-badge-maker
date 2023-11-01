@@ -67,13 +67,21 @@ class Rectangle(NamedTuple):
     def height(self):
         return self.y2-self.y1
 
-width, height = root.get('width'), root.get('height')
+width = float(root.get('width').strip('mm'))
+height = float(root.get('height').strip('mm'))
 
-bb = [Rectangle.fromNode(node) for node in root.findall(f".//*[@x]")]
+#root.findall(".//{http://www.w3.org/2000/svg}g")
+#root.find(".//{http://www.w3.org/2000/svg}g[@id='g3']").attrib
+
 
 # https://stackoverflow.com/a/1954382/3356840
 # ElementTree is a broken POS because every element-tag has a namespace appended to it.
 
 # minidom is broken because getElementById does not work on all children (so why bother) ... why is xml so broken in python standard librarys
+
+from functools import reduce
+import operator
+
+bb = reduce(operator.add, (Rectangle.fromNode(node) for node in root.findall(f".//*[@x]")))
 
 breakpoint()
