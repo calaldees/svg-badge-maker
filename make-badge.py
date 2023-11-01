@@ -20,6 +20,17 @@ Commendline
 
 from __future__ import annotations
 
+from pathlib import Path
+import csv
+
+def open_csv_dict(path):
+    if not isinstance(path, Path):
+        path = Path(path)
+    with path.open() as f:
+        return tuple(csv.DictReader(f))
+rr = open_csv_dict("test.csv")
+
+
 FILENAME_SVG = 'a4-blank-test.svg'
 
 
