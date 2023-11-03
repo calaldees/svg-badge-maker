@@ -84,4 +84,34 @@ import operator
 
 bb = reduce(operator.add, (Rectangle.fromNode(node) for node in root.findall(f".//*[@x]")))
 
+import copy
+# https://stackoverflow.com/a/31980746/3356840
+node_to_clone = root.find(".//{http://www.w3.org/2000/svg}g[@id='g3']")
+
+def shift_element_coordinate(root, x_shift, y_shift):
+    for el in root.iter():
+        if el == root:
+            continue
+        print(el)
+        if {"x","y"} <= set(el.attrib.keys()):
+            el.attrib["x"] = str(float(el.attrib["x"]) + x_shift)
+            el.attrib["y"] = str(float(el.attrib["y"]) + y_shift)
+        shift_element_coordinate(el, x_shift, y_shift)
+    return 
+
+
+parent_map = {c: p for p in root.iter() for c in p}
+parent = parent_map[node_to_clone]
+
+node_clone = copy.deepcopy(node_to_clone)
+del node_clone.attrib["id"]
+shift_element_coordinate(node_clone,1,1)
+
+
+parent.append(node_clone)
+
+from pprint import pprint
+
+pprint(ElementTree.tostring(root).decode('utf8'))
+
 breakpoint()
